@@ -1,5 +1,3 @@
-const log = (string: string): string => {
-    return string;
-};
+import { Mondrian } from './Mondrian';
 
-console.log(log('test'));
+const mondrian = new Mondrian('mondrian');
