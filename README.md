@@ -1,0 +1,1 @@
+Boilerplate for quickly starting new projects using TypeScript, Tailwind and Vite.
