@@ -39,6 +39,8 @@ export class Mondrian {
         this.squares = this.createSquares();
         this.colorHelper.setColorTotal(this.squares.length);
         const colors = this.colorHelper.getColors();
+        console.log(this.squares);
+        
         this.squares.forEach((square, index) => {
             this.drawSquare(square, colors[index]);
         });
@@ -60,8 +62,49 @@ export class Mondrian {
         this.context.rect(square.point.x, square.point.y, square.width, square.height);
         this.context.fillStyle = COLORS[color];
         this.context.fill();
-        // TODO: update stroke color
+        this.context.strokeStyle = COLORS['black'];
         this.context.stroke();
+        this.context.closePath();
+        this.removeOuterBorders(square, color);
+    }
+
+    private removeOuterBorders(square: Square, color: ColorKey) {
+      const lineWidthAdjustment = this.context.lineWidth / 2;
+      if (square.point.x === 0) {
+        this.context.beginPath();
+        const startYPos = square.point.y === 0 ? square.point.y : square.point.y + lineWidthAdjustment;
+        this.context.moveTo(0, startYPos);
+        this.context.lineTo(0, square.point.y + (square.height - lineWidthAdjustment));
+        this.context.strokeStyle = COLORS[color];
+        this.context.stroke();
+      }
+
+      if (square.point.y === 0) {
+        this.context.beginPath();
+        this.context.moveTo(square.point.x + lineWidthAdjustment, 0);
+        this.context.lineTo(square.point.x + (square.width - lineWidthAdjustment), 0);
+        this.context.strokeStyle = COLORS[color];
+        this.context.stroke();
+      }
+
+      if (square.point.x + square.width === this.canvas.width) {          
+        this.context.beginPath();
+        const startYPos = square.point.y === 0 ? square.point.y : square.point.y + lineWidthAdjustment;
+        this.context.moveTo(this.canvas.width, startYPos);
+        this.context.lineTo(this.canvas.width, square.point.y + (square.height - lineWidthAdjustment));
+        this.context.strokeStyle = COLORS[color];
+        this.context.stroke();
+      }
+
+      if (square.point.y + square.height === this.canvas.height) {          
+        this.context.beginPath();
+        const startXPos = square.point.x === 0 ? square.point.x : square.point.x + lineWidthAdjustment;
+        const endXPos = square.point.x + square.width === this.canvas.width ? square.point.x + square.width : (square.point.x + square.width) - lineWidthAdjustment;
+        this.context.moveTo(startXPos, this.canvas.height);
+        this.context.lineTo(endXPos, this.canvas.height);
+        this.context.strokeStyle = COLORS[color];
+        this.context.stroke();
+      }
     }
 
     private splitSquares(splitIndex: number, squares: Square[]): Square[] {
